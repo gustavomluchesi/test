@@ -15,8 +15,6 @@ install.packages("tidycensus")
 library(tidyverse)
 library(tidycensus)
 
-census_api_key("e91cae5f77b0e7a0646ef73bd2f959627d86b398")
-
 vars <- c("SERIALNO", "SPORDER", "SEX", "AGEP", "FER")
 
 us_pums <- get_pums(variables = vars,
