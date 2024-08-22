@@ -28,7 +28,7 @@ options(timeout = 500)
 
 # Define prefix, years, and variables to download 
 url <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
-years <- 2005:2007
+years <- 2000:2022
 vars <- c("SERIALNO", "PWGTP", "PUMA", "SEX", "AGEP", "FER")
 
 

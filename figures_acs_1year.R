@@ -1,33 +1,33 @@
 #######################################################################
 # Script: figures_acs_1year.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/21/2024
+# Last Updated: 8/22/2024
 # Description: Create figures of birth rates for different cohorts of women
 
 # Input: ACS PUMS 2000 - 2022 cleaned csv
 
-# Output: Figures 
+# Output: Fertility by cohort figures 
 #######################################################################
 
-install.packages("tidyverse")
-install.packages("tidycensus")
+# Installing required packages
+packages <- c("tidyverse")
 
-library(tidyverse)
-library(tidycensus)
+to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
 
-vars <- c("SERIALNO", "SPORDER", "SEX", "AGEP", "FER")
+if(length(to_install) > 0) install.packages(to_install)
 
-us_pums <- get_pums(variables = vars,
-                    state = "all",
-                    survey = "acs1",
-                    year = 2022)
+lapply(packages, require, character.only = TRUE)
+
+# Clean workspace
+rm(list = ls())
 
 
-women_us <- us_pums %>% 
-  filter(FER != "b")
+pums_2008 <- read.csv("raw_data/pus2008.csv")
 
-summary_2022 <- women_us %>% 
+
+summary <- pums_2008 %>% 
   
+  filter(!is.na(FER)) %>% 
   group_by(AGEP, FER) %>%  
   summarise(n_weighted = sum(PWGTP)) %>% 
   
@@ -40,12 +40,12 @@ summary_2022 <- women_us %>%
   select(-c(FER, total_weighted, n_weighted))
 
 
-summary_2022 %>% ggplot() +
+summary %>% ggplot() +
   geom_line(aes(x = AGEP, y = percent_pregnant)) +
   labs(title = "Did you give birth to a child in the last 12 months?",
        x = "Age of Woman") +
   scale_y_continuous(labels = scales::label_percent(accuracy = 0.1),
-                     limits = c(0, 0.125),
+                     limits = c(0, 0.13),
                      n.breaks = 6) +
   theme_minimal() +
   theme(axis.title.y = element_blank())
